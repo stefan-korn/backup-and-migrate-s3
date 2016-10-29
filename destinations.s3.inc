@@ -32,6 +32,8 @@ class backup_migrate_destination_s3_compatible extends backup_migrate_destinatio
       's3_timeout' => '',
       's3_proxy' => '',
       's3_min_part_size' => '',
+      's3_signature' => '',
+      's3_region' => '',
     ),
   );
 
@@ -83,6 +85,13 @@ class backup_migrate_destination_s3_compatible extends backup_migrate_destinatio
       'secret'   => $this->s3_secret(),
     );
 
+    if (!empty($this->settings['s3_signature'])) {
+      $config['signature'] = $this->settings['s3_signature'];
+    }
+
+    if (!empty($this->settings['s3_region'])) {
+      $config['region'] = $this->settings['s3_region'];
+    }
     if (!empty($this->settings['s3_proxy'])) {
       $config['request.options'] = array(
         'proxy' => $this->settings['s3_proxy'],
@@ -227,6 +236,8 @@ class backup_migrate_destination_s3_compatible extends backup_migrate_destinatio
           'base_url' => $form_state['values']['scheme'] . '://' . $form_state['values']['host'],
           'key'      => $form_state['values']['user'],
           'secret'   => empty($form_state['values']['pass']) ? $form_state['values']['old_password'] : $form_state['values']['pass'],
+          'signature' => $form_state['values']['s3_signature'],
+          'region' => $form_state['values']['s3_region'],
         );
 
        if (!empty($form_state['values']['s3_proxy'])) {
@@ -270,6 +281,8 @@ class backup_migrate_destination_s3_compatible extends backup_migrate_destinatio
     $this->settings['s3_timeout'] = $form_state['values']['s3_timeout'];
     $this->settings['s3_proxy'] = $form_state['values']['s3_proxy'];
     $this->settings['s3_min_part_size'] = $form_state['values']['s3_min_part_size'];
+    $this->settings['s3_signature'] = $form_state['values']['s3_signature'];
+    $this->settings['s3_region'] = $form_state['values']['s3_region'];
 
     parent::edit_form_submit($form, $form_state);
   }
@@ -323,6 +336,33 @@ class backup_migrate_destination_s3_compatible extends backup_migrate_destinatio
       '#element_validate' => array(array($this, 'file_directory_validate')),
       '#weight' => 25,
     );
+    $form['s3_signature'] = array(
+      '#type' => 'textfield',
+      '#title' => t('S3 Signature'),
+      '#default_value' => $this->settings['s3_signature'],
+      '#description' => t('Optional specify signature version for authentication (http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html)'),
+      '#weight' => 48,
+    );
+   $form['s3_region'] = array(
+       '#type' => 'select',
+       '#title' => t('Selected'),
+       '#options' => array(
+         '' => t('Not specified'),
+         'us-east-1' => t('US East (N. Virginia)'),
+         'us-west-2' => t('US West (Oregon)'),
+         'us-west-1' => t('US West (N. California)'),
+         'eu-west-1' => t('EU (Ireland)'),
+         'eu-central-1' => t('EU (Frankfurt)'),
+         'ap-southeast-1' => t('Asia Pacific (Singapore)'),
+         'ap-northeast-1' => t('Asia Pacific (Tokyo)'),
+         'ap-southeast-2' => t('Asia Pacific (Sydney)'),
+         'ap-northeast-2' => t('Asia Pacific (Seoul)'),
+         'sa-east-1' => t('South America (Sao Paulo)'),
+       ),
+       '#default_value' => $this->settings['s3_region'],
+       '#description' => t('Optional specify region which is needed for signature version authentication'),
+       '#weight' => 49,
+   );
 
     $form['s3_advanced'] = array(
       '#type' => 'fieldset',
