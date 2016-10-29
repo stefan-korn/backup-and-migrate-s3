@@ -337,30 +337,38 @@ class backup_migrate_destination_s3_compatible extends backup_migrate_destinatio
       '#weight' => 25,
     );
     $form['s3_signature'] = array(
-      '#type' => 'textfield',
+      '#type' => 'select',
       '#title' => t('S3 Signature'),
+       '#options' => array(
+         '' => t('Not specified'),
+         'v2' => t('v2 Signature'),
+         'v3https' => t('v3https Signature'),
+         'v4' => t('v4 Signature'),
+       ),
       '#default_value' => $this->settings['s3_signature'],
-      '#description' => t('Optional specify signature version for authentication (http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html)'),
+      '#description' => t('Optional specify signature version for authentication (http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#client-configuration-options)'),
       '#weight' => 48,
     );
    $form['s3_region'] = array(
        '#type' => 'select',
-       '#title' => t('Selected'),
+       '#title' => t('S3 Region'),
        '#options' => array(
          '' => t('Not specified'),
          'us-east-1' => t('US East (N. Virginia)'),
-         'us-west-2' => t('US West (Oregon)'),
+         'us-east-2' => t('US East (Ohio)'),
          'us-west-1' => t('US West (N. California)'),
+         'us-west-2' => t('US West (Oregon)'),
          'eu-west-1' => t('EU (Ireland)'),
          'eu-central-1' => t('EU (Frankfurt)'),
          'ap-southeast-1' => t('Asia Pacific (Singapore)'),
          'ap-northeast-1' => t('Asia Pacific (Tokyo)'),
          'ap-southeast-2' => t('Asia Pacific (Sydney)'),
          'ap-northeast-2' => t('Asia Pacific (Seoul)'),
+         'ap-south-1' => t('Asia Pacific (Mumbai)'),
          'sa-east-1' => t('South America (Sao Paulo)'),
        ),
        '#default_value' => $this->settings['s3_region'],
-       '#description' => t('Optional specify region which is needed for signature version authentication'),
+       '#description' => t('Optional specify region which is needed for signature version authentication (http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#specify-region)'),
        '#weight' => 49,
    );
 
